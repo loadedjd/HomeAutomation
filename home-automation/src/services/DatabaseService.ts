@@ -53,7 +53,7 @@ export class DatabaseService {
 
     public static getAllClientData(): Promise<object[]> {
         const promise = new Promise<object[]>((resolve, reject) => {
-            this._connection.query('select * from clientdata', (err, results, fields) => {
+            this._connection.query('SELECT * FROM registeredclient.clientdata order by unix_timestamp(clientdata.time) desc', (err, results, fields) => {
                 if (err) {
                     console.log(colors.bgRed(`Error getting client data`));
                     reject(err);
@@ -65,22 +65,33 @@ export class DatabaseService {
         return promise;
     }
 
-    public static getRegisteredClient(id: string, callback: (results: object[]) => void) {
-        this._connection.query('select * from registeredclient where id = ?', [id], (err, results, fields) => {
-            if (err)
-                console.log(colors.bgRed(`Error getting client ${id}`));
-            else
-                callback(results);
+    public static getRegisteredClient(id: string): Promise<Client> {
+        const promise = new Promise<Client>((resolve, reject) => {
+
+            this._connection.query('select * from registeredclient where id = ?', [id], (err, results, fields) => {
+                if (err) {
+                    console.log(colors.bgRed(`Error getting client ${id}`));
+                    reject(err);
+                } else
+                    resolve(results);
+            });
         });
+        return promise;
     }
 
-    public static getClientData(id: string, callback: (results: object[]) => void) {
-        this._connection.query('select * from clientdata where clientid = ?', [id], (err, results, fields) => {
-            if (err)
-                console.log(colors.bgRed(`Error getting client data for ${id}`));
-            else
-                callback(results);
+    public static getClientData(id: string): Promise<Data> {
+        const promise = new Promise<Data>((resolve, reject) => {
+
+            this._connection.query('SELECT * FROM registeredclient.clientdata where clientdata.clientid = \'fp-temp\' order by unix_timestamp(clientdata.time) desc;', [id], (err, results, fields) => {
+                if (err) {
+                    console.log(colors.bgRed(`Error getting client data for ${id}`));
+                    reject(err);
+                }
+                else
+                    resolve(results);
+            });
         });
+        return promise;
     }
 
     public static getClientCommands(id: string): Promise<object[]> {

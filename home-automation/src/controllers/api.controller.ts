@@ -10,6 +10,11 @@ export class ApiController {
         return DatabaseService.getAllConnectedAndRegisteredClients();
     }
 
+    @Get('clients/:id')
+    getClient(@Param('id') id) {
+        return DatabaseService.getRegisteredClient(id);
+    }
+
     @Get('command/:id')
     getClientCommand(@Param('id') id) {
         return DatabaseService.getClientCommands(id);
@@ -26,6 +31,11 @@ export class ApiController {
     @Get('data')
     getAllClientData() {
         return DatabaseService.getAllClientData();
+    }
+
+    @Get('data/:id')
+    getClientData(@Param('id') id) {
+        return DatabaseService.getClientData(id);
     }
 
 }
